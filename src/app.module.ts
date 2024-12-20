@@ -6,9 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import { WeatherModule } from './modules/weather/weather.module';
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     UsersModule,
     WeatherModule,
     ConfigModule.forRoot({

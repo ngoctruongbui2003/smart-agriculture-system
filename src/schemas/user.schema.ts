@@ -1,18 +1,31 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { AccountType } from 'src/constants/enum';
 
-export type WeatherDocument = HydratedDocument<Weather>;
+export type UserDocument = HydratedDocument<User>;
 
-@Schema()
-export class Weather {
+@Schema({ timestamps: true })
+export class User {
     @Prop()
-    name: string;
-
-    @Prop()
-    age: number;
+    email: string;
 
     @Prop()
-    breed: string;
+    password: string;
+
+    @Prop()
+    firstName: string;
+
+    @Prop()
+    lastName: string;
+
+    @Prop()
+    phoneNumber: string;
+
+    @Prop()
+    avatarUrl: string;
+
+    @Prop({ enum: AccountType, default: AccountType.LOCAL })
+    accountType: string;
 }
 
-export const WeatherSchema = SchemaFactory.createForClass(Weather);
+export const UserSchema = SchemaFactory.createForClass(User);

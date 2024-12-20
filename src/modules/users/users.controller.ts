@@ -1,32 +1,60 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { CreateUserDto, UpdateUserDto, UpdateUserPasswordDto } from './dto';
+import { CREATE_SUCCESS, DELETE_SUCCESS, GET_ALL_SUCCESS, GET_SUCCESS, UPDATE_SUCCESS } from 'src/constants/server';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create() {
-    return this.usersService.create();
+  async create(@Body() createUserDto: CreateUserDto) {
+    return {
+      message: CREATE_SUCCESS,
+      data: await this.usersService.create(createUserDto),
+    };
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    return {
+      message: GET_ALL_SUCCESS,
+      data: await this.usersService.findAll(),
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return {
+      message: GET_SUCCESS,
+      data: await this.usersService.findOne(id),
+    };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string) {
-    return this.usersService.update(+id);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return {
+      message: UPDATE_SUCCESS,
+      data: await this.usersService.update(id, updateUserDto)
+    };
+  }
+
+  @Patch('/change-password/:id')
+  async updatePassword(
+    @Param('id') id: string,
+    @Body() updateUserPasswordDto: UpdateUserPasswordDto
+  ) {
+    return {
+      message: UPDATE_SUCCESS,
+      data: await this.usersService.updatePassword(id, updateUserPasswordDto)
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return {
+      message: DELETE_SUCCESS,
+      data: await this.usersService.remove(id)
+    };
   }
 }
