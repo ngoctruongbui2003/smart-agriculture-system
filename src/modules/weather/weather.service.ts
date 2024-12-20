@@ -8,28 +8,6 @@ export class WeatherService {
 
   private weatherApiKey = process.env.WEATHER_API_KEY;
   private ipstackApiKey = process.env.IPSTACK_API_KEY;
-  
-
-
-  create() {
-    return 'This action adds a new weather';
-  }
-
-  findAll() {
-    return `This action returns all weather`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} weather`;
-  }
-
-  update(id: number) {
-    return `This action updates a #${id} weather`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} weather`;
-  }
 
   // Get location data by IP
   async getLocationByIP(ip: string): Promise<any> {

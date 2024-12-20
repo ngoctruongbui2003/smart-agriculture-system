@@ -5,9 +5,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import { WeatherModule } from './modules/weather/weather.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
+    UsersModule,
     WeatherModule,
     ConfigModule.forRoot({
       isGlobal: true,
