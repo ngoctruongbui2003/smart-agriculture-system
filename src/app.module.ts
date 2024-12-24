@@ -7,12 +7,19 @@ import { Connection } from 'mongoose';
 import { WeatherModule } from './modules/weather/weather.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TransformInterceptor } from './core/transform.interceptor';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { SensorModule } from './modules/sensor/sensor.module';
+import { FieldModule } from './modules/field/field.module';
 
 @Module({
   imports: [
     AuthModule,
     UsersModule,
     WeatherModule,
+    SensorModule,
+    FieldModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -30,8 +37,23 @@ import { AuthModule } from './modules/auth/auth.module';
       }),
       inject: [ConfigService],
     }),
+    ClientsModule.register([
+      {
+        name: 'MQTT_SERVICE',
+        transport: Transport.MQTT,
+        options: {
+          url: 'mqtt://broker.hivemq.com',
+        },
+      },
+    ]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+  ],
 })
 export class AppModule {}

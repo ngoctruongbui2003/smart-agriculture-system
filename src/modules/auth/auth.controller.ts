@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, LoginWithPlatformDto, RegisterDto } from './dto';
 import { LOGIN_SUCCESS, REGISTER_SUCCESS } from 'src/constants/server';
@@ -8,6 +8,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/register')
+  @HttpCode(200)
   async register(@Body() registerDto: RegisterDto) {
     return {
       message: REGISTER_SUCCESS,
@@ -16,6 +17,7 @@ export class AuthController {
   }
 
   @Post('/login')
+  @HttpCode(200)
   async login(@Body() loginDto: LoginDto) {
     return {
       message: LOGIN_SUCCESS,
@@ -24,6 +26,7 @@ export class AuthController {
   }
 
   @Post('/login-facebook')
+  @HttpCode(200)
   async LoginWithFacebook(@Body() loginWithPlatformDto: LoginWithPlatformDto) {
     return {
       message: LOGIN_SUCCESS,
@@ -32,6 +35,7 @@ export class AuthController {
   }
 
   @Post('/login-google')
+  @HttpCode(200)
   async LoginWithGoogle(@Body() loginWithPlatformDto: LoginWithPlatformDto) {
     return {
       message: LOGIN_SUCCESS,
