@@ -25,6 +25,9 @@ jobs:
       - name: install package
         run: npm install
 
+      - name: Set environment variables for Docker build
+        run: echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+
       - name: Build Docker image
         run: docker build -t ${{ secrets.IMAGE_NAME }}-production:${{ secrets.TAG_NAME }} .
 
