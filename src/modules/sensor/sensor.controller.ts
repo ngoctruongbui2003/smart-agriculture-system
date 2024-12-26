@@ -1,12 +1,27 @@
+import { CreateSensorDto } from './dto';
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { SensorService } from './sensor.service';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('sensor')
 export class SensorController {
   constructor(private readonly sensorService: SensorService) {}
   
-  @Post('data')
-  handleSensorData(@Body() data: any) {
-    console.log('Dữ liệu từ cảm biến:', data);
+  @MessagePattern('sensor/data')
+  async handleSensorData(createSensorDto: CreateSensorDto) {
+    console.log('Received sensor data:', createSensorDto);
+
+    return {
+      message: 'Data received successfully',
+      data: await this.sensorService.saveSensorData(createSensorDto)
+    };
+  }
+
+  @Post()
+  async create(@Body() createSensorDto: CreateSensorDto) {
+    return {
+      message: 'Sensor created successfully',
+      data: await this.sensorService.create(createSensorDto),
+    };
   }
 }

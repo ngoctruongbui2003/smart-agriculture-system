@@ -18,6 +18,12 @@ export class Sensor {
     @Prop()
     soilMoisture: string;
 
+    @Prop()
+    rainVolume: string;
+
+    @Prop()
+    gasVolume: string;
+
     @Prop({ type: Types.ObjectId, ref: 'Field' })
     fieldId: Field;
 }
