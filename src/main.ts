@@ -8,13 +8,13 @@ async function bootstrap() {
   // Global Prefix
   app.setGlobalPrefix('api/v1', { exclude: [''] });
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.MQTT,
-    options: {
-      url: 'mqtt://103.216.117.115:3001:1883',
-    },
-  });
-  await app.startAllMicroservices();
+  // app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.MQTT,
+  //   options: {
+  //     url: 'mqtt://103.216.117.115:3001:1883',
+  //   },
+  // });
+  // await app.startAllMicroservices();
   await app.listen(process.env.PORT || 3000);
 
   console.log(`Application is running on: ${await app.getUrl()}`);

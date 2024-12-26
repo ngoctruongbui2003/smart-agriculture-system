@@ -17,6 +17,13 @@ export class SensorController {
     };
   }
 
+  @Get()
+  async findAll() {
+    return {
+      message: 'Sensor finall successfully',
+    }
+  }
+
   @Post()
   async create(@Body() createSensorDto: CreateSensorDto) {
     return {
