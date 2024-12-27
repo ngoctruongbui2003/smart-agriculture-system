@@ -7,15 +7,15 @@ import { MessagePattern } from '@nestjs/microservices';
 export class SensorController {
   constructor(private readonly sensorService: SensorService) {}
   
-  @MessagePattern('sensor/data')
-  async handleSensorData(createSensorDto: CreateSensorDto) {
-    console.log('Received sensor data:', createSensorDto);
+  // @MessagePattern('sensor/data')
+  // async handleSensorData(createSensorDto: CreateSensorDto) {
+  //   console.log('Received sensor data:', createSensorDto);
 
-    return {
-      message: 'Data received successfully',
-      data: await this.sensorService.saveSensorData(createSensorDto)
-    };
-  }
+  //   return {
+  //     message: 'Data received successfully',
+  //     data: await this.sensorService.saveSensorData(createSensorDto)
+  //   };
+  // }
 
   @Get()
   async findAll() {
