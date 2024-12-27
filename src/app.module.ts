@@ -37,15 +37,15 @@ import { FieldModule } from './modules/field/field.module';
       }),
       inject: [ConfigService],
     }),
-    ClientsModule.register([
-      {
-        name: 'MQTT_SERVICE',
-        transport: Transport.MQTT,
-        options: {
-          url: 'mqtt://broker.hivemq.com',
-        },
-      },
-    ]),
+    // ClientsModule.register([
+    //   {
+    //     name: 'MQTT_SERVICE',
+    //     transport: Transport.MQTT,
+    //     options: {
+    //       url: 'mqtt://broker.hivemq.com',
+    //     },
+    //   },
+    // ]),
   ],
   controllers: [AppController],
   providers: [
