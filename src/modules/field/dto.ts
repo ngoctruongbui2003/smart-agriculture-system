@@ -24,4 +24,7 @@ export class CreateFieldDto {
 
     @IsString()
     haverstTime: string;
+
+    @IsString()
+    userId: string;
 }

@@ -13,13 +13,7 @@ export class User {
     password: string;
 
     @Prop()
-    firstName: string;
-
-    @Prop()
-    lastName: string;
-
-    @Prop()
-    phoneNumber: string;
+    username: string;
 
     @Prop()
     avatarUrl: string;

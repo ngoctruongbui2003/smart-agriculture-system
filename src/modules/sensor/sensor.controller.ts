@@ -21,6 +21,7 @@ export class SensorController {
   async findAll() {
     return {
       message: 'Sensor finall successfully',
+      data: await this.sensorService.findAll(),
     }
   }
 

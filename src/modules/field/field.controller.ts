@@ -7,36 +7,46 @@ import { CreateFieldDto } from './dto';
 export class FieldController {
     constructor(private readonly fieldService: FieldService) {}
 
-    // Endpoint to create a new field
     @Post()
-    create(@Body() createFieldDto: CreateFieldDto) {
-        return this.fieldService.create(createFieldDto);
+    async create(@Body() createFieldDto: CreateFieldDto) {
+        return {
+            message: 'Field created successfully',
+            data: await this.fieldService.create(createFieldDto),
+        };
     }
 
-    // Endpoint to get all fields
     @Get()
-    findAll() {
-        return this.fieldService.findAll();
+    async findAll() {
+        return {
+            message: 'Fields fetched successfully',
+            data: await this.fieldService.findAll(),
+        };
     }
 
-    // Endpoint to get a specific field by ID
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.fieldService.findOne(id);
+    async findOne(@Param('id') id: string) {
+        return {
+            message: 'Field fetched successfully',
+            data: await this.fieldService.findOne(id),
+        };
     }
 
-    // Endpoint to update a field by ID
     @Put(':id')
-    update(
+    async update(
         @Param('id') id: string,
         @Body() updateFieldDto: CreateFieldDto,
     ) {
-        return this.fieldService.update(id, updateFieldDto);
+        return {
+            message: 'Field updated successfully',
+            data: await this.fieldService.update(id, updateFieldDto),
+        };
     }
 
-    // Endpoint to delete a field by ID
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.fieldService.remove(id);
+    async remove(@Param('id') id: string) {
+        return {
+            message: 'Field deleted successfully',
+            data: await this.fieldService.remove(id),
+        };
     }
 }

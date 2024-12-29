@@ -33,6 +33,7 @@ export class UsersService {
 
   async findOne(id: string) {
     const user = await this.userModel.findById(id)
+    delete user.password;
     return user;
   }
 
@@ -52,6 +53,7 @@ export class UsersService {
       updateUserDto,
       { new: true }
     )
+    delete user.password;
     if (!user) throw new BadRequestException(USER_NOT_FOUND);
 
     return user;

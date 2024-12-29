@@ -30,15 +30,15 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-
+    // Find user by email
     const foundUser = await this.usersService.findByEmail(loginDto.email);
     if (!foundUser) throw new BadRequestException(LOGIN_FAIL);
 
+    // Compare password
     const isMatch = await comparePassword(loginDto.password, foundUser.password);
     if (!isMatch) throw new BadRequestException(LOGIN_FAIL);
 
-    await delete foundUser.password;
-
+    delete foundUser.password;
     return foundUser;
   }
 
@@ -61,7 +61,7 @@ export class AuthService {
     // send mail
     // const registerMailDto = plainToInstance(RegisterMailDto, createUserDto)
     // this.mailService.registerMail(registerMailDto);
-
+    delete newUser.password;
     return newUser;
   }
 
