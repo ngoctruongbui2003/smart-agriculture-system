@@ -5,6 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: app-music-nest
+    container_name: smart-agriculture-system
     ports:
       - "3000:3000"
