@@ -1,3 +1,4 @@
+import { PartialType } from "@nestjs/mapped-types";
 import { IsString } from "class-validator";
 
 export class CreateFieldDto {
@@ -28,3 +29,5 @@ export class CreateFieldDto {
     @IsString()
     userId: string;
 }
+
+export class UpdateFieldDto extends PartialType(CreateFieldDto) {}

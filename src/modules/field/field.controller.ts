@@ -1,7 +1,7 @@
 // field.controller.ts
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Patch } from '@nestjs/common';
 import { FieldService } from './field.service';
-import { CreateFieldDto } from './dto';
+import { CreateFieldDto, UpdateFieldDto } from './dto';
 
 @Controller('fields')
 export class FieldController {
@@ -31,10 +31,10 @@ export class FieldController {
         };
     }
 
-    @Put(':id')
+    @Patch(':id')
     async update(
         @Param('id') id: string,
-        @Body() updateFieldDto: CreateFieldDto,
+        @Body() updateFieldDto: UpdateFieldDto,
     ) {
         return {
             message: 'Field updated successfully',

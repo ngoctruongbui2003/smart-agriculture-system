@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Field, FieldDocument } from 'src/schemas/field.schema';
-import { CreateFieldDto } from './dto';
+import { CreateFieldDto, UpdateFieldDto } from './dto';
 import { convertObjectId } from 'src/utils';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class FieldService {
         return await this.fieldModel.findById(id).exec();
     }
 
-    async update(id: string, updateFieldDto: CreateFieldDto): Promise<Field> {
+    async update(id: string, updateFieldDto: UpdateFieldDto): Promise<Field> {
         return await this.fieldModel.findByIdAndUpdate(id, updateFieldDto, { new: true }).exec();
     }
 
