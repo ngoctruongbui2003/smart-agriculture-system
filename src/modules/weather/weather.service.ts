@@ -35,6 +35,21 @@ export class WeatherService {
     }
   }
 
+  // Get weather data by City
+  async getWeatherByCityName(cityName: string): Promise<any> {
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${this.weatherApiKey}`
+    console.log("+" + url + "+");
+    
+    try {
+      const response = await lastValueFrom(this.httpService.get(url));
+      console.log(`response: ${response}`);
+      
+      return response.data;
+    } catch (error) {
+      throw new BadRequestException('Failed to fetch weather');
+    }
+  }
+
   // Combined function
   async getWeatherByIP(ip: string): Promise<any> {
     console.log(`IP: ${ip}`);
