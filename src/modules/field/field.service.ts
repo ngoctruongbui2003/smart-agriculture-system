@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Field, FieldDocument } from 'src/schemas/field.schema';
-import { CreateFieldDto, UpdateFieldDto } from './dto';
-import { convertObjectId } from 'src/utils';
+import { CreateFieldDto, PaginationDto, UpdateFieldDto } from './dto';
+import { convertObjectId, parseSortFields } from 'src/utils';
 
 @Injectable()
 export class FieldService {
@@ -20,17 +20,47 @@ export class FieldService {
         return newField.save();
     }
 
-    async findAll(): Promise<Field[]> {
-        return await this.fieldModel.find().exec();
+    async findAll(paginationDto: PaginationDto) {
+        const { page, limit, sort } = paginationDto;
+        let sortCriteria;
+        if (sort) sortCriteria = parseSortFields(sort);
+
+        const fields = await this.fieldModel
+                    .find()
+                    .skip((page - 1) * limit)
+                    .limit(limit)
+                    .sort(sort && sortCriteria)
+                    .lean();
+        return {
+            page: page && +page,
+            limit: limit && +limit,
+            total: await this.fieldModel.countDocuments(),
+            data: fields,
+        };
     }
 
     async findOne(id: string): Promise<Field> {
         return await this.fieldModel.findById(id).exec();
     }
 
-    async findByUserId(userId: string): Promise<Field[]> {
+    async findByUserId(userId: string, paginationDto: PaginationDto) {
+        const { page, limit, sort } = paginationDto;
+        let sortCriteria;
+        if (sort) sortCriteria = parseSortFields(sort);
+
         const userIdObject = convertObjectId(userId);
-        return await this.fieldModel.find({ userId: userIdObject }).exec();
+        const fields = await this.fieldModel
+                    .find({ userId: userIdObject })
+                    .skip((page - 1) * limit)
+                    .limit(limit)
+                    .sort(sort && sortCriteria)
+                    .lean();
+        return {
+            page: page && +page,
+            limit: limit && +limit,
+            total: await this.fieldModel.countDocuments({ userId: userIdObject }),
+            data: fields,
+        };
     }
 
     async update(id: string, updateFieldDto: UpdateFieldDto): Promise<Field> {

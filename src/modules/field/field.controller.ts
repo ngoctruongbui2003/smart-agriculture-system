@@ -1,13 +1,13 @@
 // field.controller.ts
 import { Controller, Get, Post, Body, Param, Put, Delete, Patch } from '@nestjs/common';
 import { FieldService } from './field.service';
-import { CreateFieldDto, UpdateFieldDto } from './dto';
+import { CreateFieldDto, PaginationDto, UpdateFieldDto } from './dto';
 
 @Controller('fields')
 export class FieldController {
     constructor(private readonly fieldService: FieldService) {}
 
-    @Post()
+    @Post('create')
     async create(@Body() createFieldDto: CreateFieldDto) {
         return {
             message: 'Field created successfully',
@@ -15,11 +15,11 @@ export class FieldController {
         };
     }
 
-    @Get()
-    async findAll() {
+    @Post()
+    async findAll(@Body() paginationDto: PaginationDto,) {
         return {
             message: 'Fields fetched successfully',
-            data: await this.fieldService.findAll(),
+            data: await this.fieldService.findAll(paginationDto),
         };
     }
 
@@ -31,11 +31,14 @@ export class FieldController {
         };
     }
 
-    @Get('user/:userId')
-    async findByUserId(@Param('userId') userId: string) {
+    @Post('user/:userId')
+    async findByUserId(
+        @Param('userId') userId: string,
+        @Body() paginationDto: PaginationDto,
+    ) {
         return {
             message: 'Field fetched successfully',
-            data: await this.fieldService.findByUserId(userId),
+            data: await this.fieldService.findByUserId(userId, paginationDto),
         };
     }
 

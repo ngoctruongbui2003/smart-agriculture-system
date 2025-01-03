@@ -1,5 +1,5 @@
 import { PartialType } from "@nestjs/mapped-types";
-import { IsString } from "class-validator";
+import { IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 export class CreateFieldDto {
     @IsString()
@@ -31,3 +31,19 @@ export class CreateFieldDto {
 }
 
 export class UpdateFieldDto extends PartialType(CreateFieldDto) {}
+
+export class PaginationDto {
+    @IsOptional()
+    @IsNumber()
+    @Min(1)
+    page?: number = 1;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(1)
+    limit?: number = 10;
+
+    @IsOptional()
+    @IsString()
+    sort?: string;
+}
