@@ -28,6 +28,11 @@ export class FieldService {
         return await this.fieldModel.findById(id).exec();
     }
 
+    async findByUserId(userId: string): Promise<Field[]> {
+        const userIdObject = convertObjectId(userId);
+        return await this.fieldModel.find({ userId: userIdObject }).exec();
+    }
+
     async update(id: string, updateFieldDto: UpdateFieldDto): Promise<Field> {
         return await this.fieldModel.findByIdAndUpdate(id, updateFieldDto, { new: true }).exec();
     }

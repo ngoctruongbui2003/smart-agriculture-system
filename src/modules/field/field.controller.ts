@@ -31,6 +31,14 @@ export class FieldController {
         };
     }
 
+    @Get('user/:userId')
+    async findByUserId(@Param('userId') userId: string) {
+        return {
+            message: 'Field fetched successfully',
+            data: await this.fieldService.findByUserId(userId),
+        };
+    }
+
     @Patch(':id')
     async update(
         @Param('id') id: string,
