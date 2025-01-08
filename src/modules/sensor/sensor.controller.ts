@@ -1,5 +1,5 @@
 import { CreateSensorDto, PaginationDto } from './dto';
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { SensorService } from './sensor.service';
 import { MessagePattern } from '@nestjs/microservices';
 
@@ -56,4 +56,48 @@ export class SensorController {
       data: await this.sensorService.findByField(fieldId, paginationDto),
     }
   }
+
+  // @Get('statistics/daily')
+  // async getDailyStatistics(
+  //   @Query('type') type: string,
+  //   @Query('date') date: string,
+  // ) {
+  //   return {
+  //     message: 'Sensor statistics successfully',
+  //     data: await this.sensorService.getDailyStatistics(type, date),
+  //   }
+  // }
+
+  @Get('statistics/daily')
+  async getDailyStatistics(
+    @Query('type') type: string,
+    @Query('date') date: string,
+  ) {
+    return {
+      message: 'Sensor statistics successfully',
+      data: await this.sensorService.getStatistics(type, date, "day"),
+    }
+  }
+
+  @Get('statistics/weekly')
+  async getWeeklyStatistics(
+    @Query('type') type: string,
+    @Query('date') date: string,
+  ) {
+    return {
+      message: 'Sensor statistics successfully',
+      data: await this.sensorService.getStatistics(type, date, "week"),
+    }
+  }
+
+  // @Get('statistics/daily')
+  // async getDailyStatistics(
+  //   @Query('type') type: string,
+  //   @Query('date') date: string,
+  // ) {
+  //   return {
+  //     message: 'Sensor statistics successfully',
+  //     data: await this.sensorService.getStatistics(type, date, "day"),
+  //   }
+  // }
 }
