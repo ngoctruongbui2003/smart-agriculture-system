@@ -70,23 +70,26 @@ export class SensorController {
 
   @Get('statistics/daily')
   async getDailyStatistics(
+    @Query('fieldId') fieldId: string,
     @Query('type') type: string,
     @Query('date') date: string,
   ) {
+    
     return {
       message: 'Sensor statistics successfully',
-      data: await this.sensorService.getStatistics(type, date, "day"),
+      data: await this.sensorService.getStatistics(fieldId, type, date, "day"),
     }
   }
 
   @Get('statistics/weekly')
   async getWeeklyStatistics(
+    @Query('fieldId') fieldId: string,
     @Query('type') type: string,
     @Query('date') date: string,
   ) {
     return {
       message: 'Sensor statistics successfully',
-      data: await this.sensorService.getStatistics(type, date, "week"),
+      data: await this.sensorService.getStatistics(fieldId, type, date, "week"),
     }
   }
 

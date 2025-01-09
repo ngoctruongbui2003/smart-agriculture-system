@@ -115,7 +115,7 @@ export class SensorService {
     //     return filledData;
     // }
 
-    async getStatistics(type: string, date: string, range: 'day' | 'week' | 'month'): Promise<any> {
+    async getStatistics(fieldId:string, type: string, date: string, range: 'day' | 'week' | 'month'): Promise<any> {
         // 1. Check if the type is valid
         if (!validFields.includes(type)) {
             throw new Error('Invalid type');
@@ -150,7 +150,10 @@ export class SensorService {
         // 2. Aggregate data
         const data = await this.sensorModel.aggregate([
             {
-                $match: { addedAt: { $gte: startDate, $lt: endDate } }
+                $match: {
+                    addedAt: { $gte: startDate, $lt: endDate },
+                    fieldId: fieldId,
+                }
             },
             {
                 $project: {
