@@ -32,3 +32,7 @@ export const parseSortFields = (sort: string) => {
 
     return sortCriteria;
 }
+
+export const convertToVietNamDateOnly = (date: Date, unit: number) => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + unit - 1).toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-')
+}

@@ -3,7 +3,7 @@ import { CreateSensorDto, PaginationDto } from './dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Sensor, SensorDocument } from 'src/schemas/sensor.schema';
 import { Model } from 'mongoose';
-import { parseSortFields } from 'src/utils';
+import { convertToVietNamDateOnly, parseSortFields } from 'src/utils';
 
 const validFields = ['humidity', 'temperature', 'light', 'soilMoisture', 'rainVolume', 'gasVolume'];
 
@@ -130,16 +130,10 @@ export class SensorService {
         } else if (range === 'week') {
             // For week range, calculate the start of the week (Monday) and the end (next Monday).
             const day = startDate.getDay();
-            console.log(`Start Date: ${startDate}`);
-            console.log(`Day: ${day}`);
             const diff = (day === 0 ? -6 : 1) - day; // Adjust to Monday
-            console.log(`Diff: ${diff}`);
             startDate.setDate(startDate.getDate() + diff);
-            console.log(`Start Date: ${startDate}`);
             endDate = new Date(startDate);
             endDate.setDate(endDate.getDate() + 7); // One week later
-            console.log(`End Date: ${endDate}`);
-            
         } else if (range === 'month') {
             // For month range, calculate the start of the month and the end of the month.
             startDate.setDate(1);
@@ -188,6 +182,7 @@ export class SensorService {
             return {
                 unit,
                 avgValue: entry ? entry.avgValue : null,
+                date: range === 'week' ? convertToVietNamDateOnly(startDate, unit) : undefined
             };
         });
     
