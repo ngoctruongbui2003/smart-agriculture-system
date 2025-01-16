@@ -31,7 +31,7 @@ export class Field {
     haverstTime: string;
 
     @Prop()
-    isWatering: boolean;
+    isWeather: boolean;
 
     @Prop()
     isAutoWatering: boolean;

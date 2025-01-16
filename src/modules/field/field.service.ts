@@ -63,9 +63,9 @@ export class FieldService {
         };
     }
 
-    async switchWatering(id: string): Promise<Field> {
+    async switchWeather(id: string): Promise<Field> {
         const field = await this.fieldModel.findById(id).exec();
-        field.isWatering = !field.isWatering;
+        field.isWeather = !field.isWeather;
         return await field.save();
     }
 

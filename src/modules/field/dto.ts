@@ -27,7 +27,7 @@ export class CreateFieldDto {
     haverstTime: string;
 
     @IsString()
-    isWatering: string;
+    isWeather: string;
 
     @IsString()
     isAutoWatering: string;

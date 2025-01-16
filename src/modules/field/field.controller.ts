@@ -61,11 +61,11 @@ export class FieldController {
         };
     }
 
-    @Patch(':id/switch-watering')
-    async switchWatering(@Param('id') id: string) {
+    @Patch(':id/switch-weather')
+    async switchWeather(@Param('id') id: string) {
         return {
-            message: 'Field watering status updated successfully',
-            data: await this.fieldService.switchWatering(id),
+            message: 'Field weather status updated successfully',
+            data: await this.fieldService.switchWeather(id),
         };
     }
 
