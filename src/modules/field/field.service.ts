@@ -63,6 +63,18 @@ export class FieldService {
         };
     }
 
+    async switchWatering(id: string): Promise<Field> {
+        const field = await this.fieldModel.findById(id).exec();
+        field.isWatering = !field.isWatering;
+        return await field.save();
+    }
+
+    async switchAutoWatering(id: string): Promise<Field> {
+        const field = await this.fieldModel.findById(id).exec();
+        field.isAutoWatering = !field.isAutoWatering;
+        return await field.save();
+    }
+
     async update(id: string, updateFieldDto: UpdateFieldDto): Promise<Field> {
         return await this.fieldModel.findByIdAndUpdate(id, updateFieldDto, { new: true }).exec();
     }

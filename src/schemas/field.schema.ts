@@ -30,6 +30,12 @@ export class Field {
     @Prop()
     haverstTime: string;
 
+    @Prop()
+    isWatering: boolean;
+
+    @Prop()
+    isAutoWatering: boolean;
+
     @Prop({ type: Types.ObjectId, ref: 'User' })
     userId: User;
 }

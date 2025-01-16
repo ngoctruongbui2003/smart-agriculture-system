@@ -27,6 +27,12 @@ export class CreateFieldDto {
     haverstTime: string;
 
     @IsString()
+    isWatering: string;
+
+    @IsString()
+    isAutoWatering: string;
+
+    @IsString()
     userId: string;
 }
 

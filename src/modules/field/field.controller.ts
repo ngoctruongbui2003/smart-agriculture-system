@@ -60,4 +60,20 @@ export class FieldController {
             data: await this.fieldService.remove(id),
         };
     }
+
+    @Patch(':id/switch-watering')
+    async switchWatering(@Param('id') id: string) {
+        return {
+            message: 'Field watering status updated successfully',
+            data: await this.fieldService.switchWatering(id),
+        };
+    }
+
+    @Patch(':id/switch-auto-watering')
+    async switchAutoWatering(@Param('id') id: string) {
+        return {
+            message: 'Field auto watering status updated successfully',
+            data: await this.fieldService.switchAutoWatering(id),
+        };
+    }
 }
