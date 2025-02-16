@@ -6,6 +6,9 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
 export class User {
+
+    _id: Types.ObjectId;
+
     @Prop()
     email: string;
 
@@ -17,6 +20,9 @@ export class User {
 
     @Prop()
     avatarUrl: string;
+
+    @Prop({ default: false })
+    receiveWeeklyEmail: boolean;
 
     @Prop({ enum: AccountType, default: AccountType.LOCAL })
     accountType: string;

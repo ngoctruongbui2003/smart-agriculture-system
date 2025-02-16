@@ -36,3 +36,21 @@ export const parseSortFields = (sort: string) => {
 export const convertToVietNamDateOnly = (date: Date, unit: number) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate() + unit - 1).toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-')
 }
+
+export const formatDate = (date: Date): string => {
+    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+}
+
+export const convertSoilMoisture = (value: number) => Math.round(((4095 - value) / 4095) * 100 * 100) / 100;
+
+export const convertRainVolume = (analogValue) => {
+    if (analogValue <= 1000) {
+        return "Mưa lớn";
+    } else if (analogValue <= 2000) {
+        return "Mưa vừa";
+    } else if (analogValue <= 3000) {
+        return "Mưa nhẹ";
+    } else {
+        return "Không mưa";
+    }
+};

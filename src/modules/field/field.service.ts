@@ -43,6 +43,11 @@ export class FieldService {
         return await this.fieldModel.findById(id).exec();
     }
 
+    async findByUserIdNoPagination(userId: string) {
+        const userIdObject = convertObjectId(userId);
+        return await this.fieldModel.find({ userId: userIdObject }).exec();
+    }
+
     async findByUserId(userId: string, paginationDto: PaginationDto) {
         const { page, limit, sort } = paginationDto;
         let sortCriteria;

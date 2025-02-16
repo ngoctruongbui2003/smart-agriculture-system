@@ -13,6 +13,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SensorModule } from './modules/sensor/sensor.module';
 import { FieldModule } from './modules/field/field.module';
 import { WateringHistoryModule } from './modules/watering-history/watering-history.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { WateringHistoryModule } from './modules/watering-history/watering-histo
     SensorModule,
     FieldModule,
     WateringHistoryModule,
+    MailModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

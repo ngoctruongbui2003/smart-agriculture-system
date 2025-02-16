@@ -93,6 +93,17 @@ export class SensorController {
     }
   }
 
+  @Get('statistics/daily1111/:fieldId')
+  async getWeeklyStatisticsByFieldId(
+    @Param('fieldId') fieldId: string,
+  ) {
+    
+    return {
+      message: 'Sensor statistics successfully',
+      data: await this.sensorService.getWeeklyStatisticsByFieldId(fieldId),
+    }
+  }
+
   // @Get('statistics/daily')
   // async getDailyStatistics(
   //   @Query('type') type: string,

@@ -8,5 +8,6 @@ import { WateringHistory, WateringHistorySchema } from 'src/schemas/watering-his
   imports: [MongooseModule.forFeature([{ name: WateringHistory.name, schema: WateringHistorySchema }])],
   controllers: [WateringHistoryController],
   providers: [WateringHistoryService],
+  exports: [WateringHistoryService],
 })
 export class WateringHistoryModule {}

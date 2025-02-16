@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Báo cáo tuần từ GreenFairm</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    h2 { color: #2c3e50; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background-color: #4CAF50; color: white; }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+  <h2>📊 Báo cáo tuần từ GreenFairm của farm <b>{{fieldName}}</b></h2>
+  <p>📅 Thống kê từ ngày <b>{{startOfWeek}}</b> đến ngày <b>{{endOfWeek}}</b></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>📅 Ngày</th>
+        <th>🌡️ Nhiệt độ (°C)</th>
+        <th>💧 Độ ẩm (%)</th>
+        <th>🌱 Độ ẩm đất (%)</th>
+        <th>🌧️ Thời tiết</th>
+        <th>🚿 Số lần tưới nước</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each days}}
+      <tr>
+        <td>{{this.day}} ({{this.date}})</td>
+        <td>{{this.temperature}}</td>
+        <td>{{this.humidity}}</td>
+        <td>{{this.soilMoisture}}</td>
+        <td>{{this.rainVolume}}</td>
+        <td>{{this.waterings}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Trung bình tuần</th>
+        <th>{{avgTemperature}}</th>
+        <th>{{avgHumidity}}</th>
+        <th>{{avgSoilMoisture}}</th>
+        <th>{{avgRainVolume}}</th>
+        <th>Tổng: {{totalWaterings}}</th>
+      </tr>
+    </tfoot>
+  </table>
+
+  <p>📌 Chúc bạn có một tuần làm việc hiệu quả! 🚀</p>
+</body>
+</html>

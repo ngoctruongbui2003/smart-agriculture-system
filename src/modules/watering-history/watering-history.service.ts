@@ -34,6 +34,15 @@ export class WateringHistoryService {
     };
   }
 
+  async getWeeklyByFieldId(fieldId: string, startOfWeek: Date, endOfWeek: Date) {
+    const wateringData = await this.wateringHistoryModel.find({
+        fieldId: fieldId,
+        startDate: { $gte: startOfWeek, $lte: endOfWeek },
+    }).exec();
+
+    return wateringData;
+  }
+
   async deleteWateringHistoryByField(fieldId: string) {
     return await this.wateringHistoryModel.updateMany({ fieldId }, { isDeleted: true });
   }
