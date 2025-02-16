@@ -41,6 +41,14 @@ export const formatDate = (date: Date): string => {
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
 }
 
+export const formatDateToVietnamese = (date: Date): string => {
+    return date
+        .toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' })
+        .split('/')
+        .reverse()
+        .join('-');
+}
+
 export const convertSoilMoisture = (value: number) => Math.round(((4095 - value) / 4095) * 100 * 100) / 100;
 
 export const convertRainVolume = (analogValue) => {

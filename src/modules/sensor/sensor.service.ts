@@ -4,7 +4,8 @@ import { CreateSensorDto, PaginationDto } from './dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Sensor, SensorDocument } from 'src/schemas/sensor.schema';
 import { Model } from 'mongoose';
-import { convertObjectId, convertRainVolume, convertSoilMoisture, convertToVietNamDateOnly, formatDate, parseSortFields } from 'src/utils';
+import { convertObjectId, convertRainVolume, convertSoilMoisture, convertToVietNamDateOnly, formatDate, formatDateToVietnamese, parseSortFields } from 'src/utils';
+import { log } from 'node:util';
 
 const validFields = ['humidity', 'temperature', 'light', 'soilMoisture', 'rainVolume', 'gasVolume'];
 
@@ -65,59 +66,6 @@ export class SensorService {
             data: sensors,
         };
     }
-
-    // async getDailyStatistics(type: string, date: string): Promise<any> {
-    //     // 1. Check if the type is valid
-    //     if (!validFields.includes(type)) {
-    //         throw new Error('Invalid type');
-    //     }
-
-    //     const allHours = Array.from({ length: 24 }, (_, i) => i);
-    //     const startOfDay = new Date(date);
-    //     const endOfDay = new Date(startOfDay);
-    //     endOfDay.setDate(endOfDay.getDate() + 1);
-        
-    //     // 2. Aggregate data
-    //     // - Match data for the given date
-    //     // - Switch the type field to a number
-    //     // - Group by hour
-    //     // - Calculate the average value for each hour
-    //     const data = await this.sensorModel.aggregate([
-    //         { 
-    //             $match: { addedAt: { $gte: startOfDay, $lt: endOfDay } } 
-    //         },
-    //         {
-    //             $project: {
-    //                 addedAt: { $toDate: "$addedAt" },
-    //                 typeValue: { $toDouble: `$${type}` },
-    //             },
-    //         },
-    //         {
-    //             $group: {
-    //                 _id: { $hour: "$addedAt" },
-    //                 avgValue: { $avg: "$typeValue" },
-    //             },
-    //         },
-    //         {
-    //             $project: {
-    //                 _id: 1,
-    //                 avgValue: { $round: ["$avgValue", 2] },
-    //             },
-    //         },
-    //         { $sort: { _id: 1 } },
-    //     ]);
-
-    //     // 3. Fill in missing hours with null values
-    //     const filledData = allHours.map((hour) => {
-    //         const entry = data.find(d => d._id === hour);
-    //         return {
-    //             hour,
-    //             avgValue: entry ? entry.avgValue : null,
-    //         };
-    //     });
-
-    //     return filledData;
-    // }
 
     async getStatistics(fieldId:string, type: string, date: string, range: 'day' | 'week' | 'month'): Promise<any> {
         // 1. Check if the type is valid
@@ -301,15 +249,12 @@ export class SensorService {
 
     async getWeeklyStatisticsByFieldId(fieldId: string): Promise<any> {
         const today = new Date();
-        const dayOfWeek = today.getDay();
-    
-        const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-        startOfWeek.setHours(0, 0, 0, 0);
+        const startOfWeek = new Date(formatDateToVietnamese(today));
+        
+        startOfWeek.setDate(today.getDate() - 6);
     
         const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        endOfWeek.setHours(23, 59, 59, 999);
+        endOfWeek.setDate(startOfWeek.getDate() + 7);
     
         console.log(startOfWeek, endOfWeek);
     
@@ -317,11 +262,12 @@ export class SensorService {
             {
                 $match: {
                     fieldId,
-                    createdAt: { $gte: startOfWeek, $lte: endOfWeek },
+                    addedAt: { $gte: startOfWeek, $lte: endOfWeek },
                 },
             },
             {
-                $addFields: {
+                $project: {
+                    addedAt: { $toDate: "$addedAt" },
                     temperature: { $toDouble: "$temperature" },
                     humidity: { $toDouble: "$humidity" },
                     soilMoisture: { $toDouble: "$soilMoisture" },
@@ -330,27 +276,36 @@ export class SensorService {
             },
             {
                 $group: {
-                    _id: {
-                        $subtract: [{ $dayOfWeek: "$createdAt" }, 1]
-                    },
+                    _id: { $isoDayOfWeek: "$addedAt" },
                     avgTemperature: { $avg: "$temperature" },
                     avgHumidity: { $avg: "$humidity" },
                     avgSoilMoisture: { $avg: "$soilMoisture" },
                     avgRainVolume: { $avg: "$rainVolume" },
                 },
             },
-            { $sort: { "_id": 1 } }
+            {
+                $project: {
+                    _id: 1,
+                    avgTemperature: { $round: ["$avgTemperature", 2] },
+                    avgHumidity: { $round: ["$avgHumidity", 2] },
+                    avgSoilMoisture: { $round: ["$avgSoilMoisture", 2] },
+                    avgRainVolume: { $round: ["$avgRainVolume", 2] },
+                },
+            },
+            { $sort: { _id: 1 } }
         ]);
     
         console.log(`📊 Sensor data:`, sensorData);
     
         const wateringData = await this.wateringHistoryService.getWeeklyByFieldId(fieldId, startOfWeek, endOfWeek);
+        
         const wateringCountMap: Record<number, number> = wateringData.reduce((acc, watering) => {
             const dayIndex = new Date(watering.startDate).getDay();
             const mappedDayIndex = dayIndex === 0 ? 6 : dayIndex - 1;
             acc[mappedDayIndex] = (acc[mappedDayIndex] || 0) + 1;
             return acc;
         }, {});
+        
     
         const daysArray: { dayIndex: number; dateString: string }[] = [];
         for (let i = 0; i < 7; i++) {
@@ -363,11 +318,10 @@ export class SensorService {
         }
     
         const daysMap = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"];
-    
         
     
         const statistics = daysArray.map(({ dayIndex, dateString }) => {
-            const sensorDay = sensorData.find(d => d._id === dayIndex) || {};
+            const sensorDay = sensorData.find(d => d._id - 1 === dayIndex) || {};
             return {
                 day: daysMap[dayIndex],
                 date: dateString,

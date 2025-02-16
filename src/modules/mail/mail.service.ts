@@ -31,7 +31,7 @@ export class MailService {
         .catch(() => {});
     }
 
-    @Cron('0 0 * * 1') // Every Monday at 00:00
+    @Cron('20 21 * * *', { timeZone: 'Asia/Ho_Chi_Minh' }) 
     // @Cron('* * * * *') // Every minute
     async sendWeeklyReport() {
         this.logger.log('🔄 Bắt đầu gửi email báo cáo hàng tuần...');
