@@ -30,6 +30,8 @@ jobs:
           echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
           echo "MQTT_BROKER_URL=${{ secrets.MQTT_BROKER_URL }}" >> .env
           echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> .env
+          echo "MAILDEV_INCOMING_USER=${{ secrets.MAILDEV_INCOMING_USER }}" >> .env
+          echo "MAILDEV_INCOMING_PASS=${{ secrets.MAILDEV_INCOMING_PASS }}" >> .env
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.IMAGE_NAME }}-production:${{ secrets.TAG_NAME }} .
