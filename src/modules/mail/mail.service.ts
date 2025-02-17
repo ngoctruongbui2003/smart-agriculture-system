@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import * as nodemailer from 'nodemailer';
 import { UsersService } from '../users/users.service';
@@ -6,6 +6,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { FieldService } from '../field/field.service';
 import { SensorService } from '../sensor/sensor.service';
 import { log } from 'node:console';
+import { adcToPpm } from 'src/utils';
 
 @Injectable()
 export class MailService {
@@ -15,21 +16,9 @@ export class MailService {
         private readonly mailerService: MailerService,
         private readonly userService: UsersService,
         private readonly fieldService: FieldService,
+        @Inject(forwardRef(() => SensorService))
         private readonly sensorService: SensorService,
     ) {}
-
-    async testMail(name: string) {
-        await this.mailerService
-        .sendMail({
-            to: 'ngoctruongbuii2003@gmail.com', // list of receivers
-            subject: 'TEST', // Subject line
-            text: 'TEST', // plaintext body
-            html: '<b>Hello {{name}}</b>', // HTML body content
-            context: { name: name },
-        })
-        .then(() => {})
-        .catch(() => {});
-    }
 
     @Cron('30 21 * * *', { timeZone: 'Asia/Ho_Chi_Minh' }) 
     // @Cron('* * * * *') // Every minute
@@ -84,6 +73,30 @@ export class MailService {
     
             this.logger.log(`✅ Đã gửi báo cáo cho user ${user.email}`);
         }
+    }
+
+    async sendGasAlert(fieldId:string, gasVolume: number, alertType: string) {
+        const field = await this.fieldService.findOne(fieldId);
+        const userId = field.userId.toString();
+        const { email } = await this.userService.findOne(userId);
+
+        const isStrongAlert = alertType.includes('Mạnh');
+
+        const gasPpm = adcToPpm(gasVolume);
+
+        await this.sendEmail(
+            email,
+            `${alertType} - Mức gas: ${gasVolume} ppm`,
+            'gas-alert',
+            {
+                alertType,
+                gasPpm,
+                bgColor: isStrongAlert ? '#ffebee' : '#fffde7',
+                textColor: isStrongAlert ? '#d32f2f' : '#856404',
+                btnColor: isStrongAlert ? '#d32f2f' : '#ff9800',
+                borderColor: isStrongAlert ? '#b71c1c' : '#ff6f00',
+            }
+        );
     }
 
     private async sendEmail(

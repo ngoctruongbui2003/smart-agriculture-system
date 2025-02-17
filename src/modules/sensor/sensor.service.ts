@@ -1,19 +1,23 @@
 import { WateringHistoryService } from './../watering-history/watering-history.service';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateSensorDto, PaginationDto } from './dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Sensor, SensorDocument } from 'src/schemas/sensor.schema';
 import { Model } from 'mongoose';
 import { convertObjectId, convertRainVolume, convertSoilMoisture, convertToVietNamDateOnly, formatDate, formatDateToVietnamese, parseSortFields } from 'src/utils';
-import { log } from 'node:util';
+import { MailService } from '../mail/mail.service';
 
 const validFields = ['humidity', 'temperature', 'light', 'soilMoisture', 'rainVolume', 'gasVolume'];
 
 @Injectable()
 export class SensorService {
+    private lastAlertSent: { [key: string]: boolean } = {};
+
     constructor(
         @InjectModel(Sensor.name) private sensorModel: Model<SensorDocument>,
-        private readonly wateringHistoryService: WateringHistoryService
+        private readonly wateringHistoryService: WateringHistoryService,
+        @Inject(forwardRef(() => MailService))
+        private mailService: MailService,
     ) {}
 
     async create(createSensorDto: CreateSensorDto) {
@@ -140,112 +144,6 @@ export class SensorService {
     
         return filledData;
     }
-    
-    // async getWeeklyStatisticsByFieldId(fieldId: string): Promise<any> {
-    //     const today = new Date();
-    //     const dayOfWeek = today.getDay(); // 0 = Chủ Nhật, 1 = Thứ Hai, ..., 6 = Thứ Bảy
-    
-    //     // ⏳ Tính ngày bắt đầu (Thứ Hai) và ngày kết thúc (Chủ Nhật)
-    //     const startOfWeek = new Date(today);
-    //     startOfWeek.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Nếu Chủ Nhật (0) -> lùi về Thứ Hai tuần trước
-    //     startOfWeek.setHours(0, 0, 0, 0);
-    
-    //     const endOfWeek = new Date(startOfWeek);
-    //     endOfWeek.setDate(startOfWeek.getDate() + 6);
-    //     endOfWeek.setHours(23, 59, 59, 999);
-    
-    //     // 🔍 Lấy dữ liệu cảm biến theo `fieldId`
-    //     const sensorData = await this.sensorModel.find({
-    //         fieldId: fieldId,
-    //         createdAt: { $gte: startOfWeek, $lte: endOfWeek },
-    //     }).exec();
-    
-    //     // 🔍 Lấy lịch sử tưới nước theo `fieldId`
-    //     const wateringData = await this.wateringHistoryService.getWeeklyByFieldId(fieldId, startOfWeek, endOfWeek);
-    
-    //     if (sensorData.length === 0) {
-    //         return {
-    //             fieldId,
-    //             days: [],
-    //             avgTemperature: 0,
-    //             avgHumidity: 0,
-    //             avgSoilMoisture: 0,
-    //             avgRainVolume: 0,
-    //             totalWaterings: wateringData.length, // 🔥 Tổng số lần tưới nước
-    //         };
-    //     }
-    
-    //     // 🎯 Tạo object chứa dữ liệu theo từng ngày
-    //     const daysMap: Record<string, any> = {
-    //         'Thứ Hai': [],
-    //         'Thứ Ba': [],
-    //         'Thứ Tư': [],
-    //         'Thứ Năm': [],
-    //         'Thứ Sáu': [],
-    //         'Thứ Bảy': [],
-    //         'Chủ Nhật': [],
-    //     };
-    
-    //     sensorData.forEach((data) => {
-    //         const dayName = this.getDayName(data.createdAt);
-    //         daysMap[dayName].push(data);
-    //     });
-    
-    //     // 🎯 Nhóm số lần tưới nước theo ngày
-    //     const wateringCountMap: Record<string, number> = {
-    //         'Thứ Hai': 0,
-    //         'Thứ Ba': 0,
-    //         'Thứ Tư': 0,
-    //         'Thứ Năm': 0,
-    //         'Thứ Sáu': 0,
-    //         'Thứ Bảy': 0,
-    //         'Chủ Nhật': 0,
-    //     };
-    
-    //     wateringData.forEach((watering) => {
-    //         const dayName = this.getDayName(watering.startDate);
-    //         wateringCountMap[dayName]++;
-    //     });
-    
-    //     // 🔥 Tính toán trung bình theo từng ngày
-    //     const days = Object.entries(daysMap).map(([day, records]) => {
-    //         if (records.length === 0) return { date: day, temperature: 0, humidity: 0, soilMoisture: 0, rainVolume: 0, waterings: wateringCountMap[day] };
-        
-    //         const avg = (key: string) => records.reduce((sum, r) => sum + r[key], 0) / records.length;
-        
-    //         return {
-    //             date: day,
-    //             temperature: avg('temperature'),
-    //             humidity: avg('humidity'),
-    //             soilMoisture: avg('soilMoisture'),
-    //             rainVolume: avg('rainVolume'),
-    //             waterings: wateringCountMap[day],
-    //         };
-    //     });
-    
-    //     // 🔥 Tính toán trung bình tuần
-    //     const avg = (key: string) => days.reduce((sum, d) => sum + d[key], 0) / days.length;
-    //     const totalWaterings = wateringData.length;
-    
-    //     return {
-    //         fieldId,
-    //         startOfWeek,
-    //         endOfWeek,
-    //         days,
-    //         avgTemperature: avg('temperature'),
-    //         avgHumidity: avg('humidity'),
-    //         avgSoilMoisture: avg('soilMoisture'),
-    //         avgRainVolume: avg('rainVolume'),
-    //         totalWaterings,
-    //     };
-    // }
-    
-    // // ✅ Hàm lấy tên thứ từ Date (bắt đầu từ Thứ Hai)
-    // private getDayName(date: Date): string {
-    //     const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-    //     const dayIndex = new Date(date).getDay();
-    //     return days[dayIndex];
-    // }
 
     async getWeeklyStatisticsByFieldId(fieldId: string): Promise<any> {
         const today = new Date();
@@ -347,5 +245,29 @@ export class SensorService {
             avgRainVolume: convertRainVolume(avg("rainVolume")),
             totalWaterings,
         };
+    }
+
+    async handleGasData(fieldId:string, gasVolume: number) {
+        let alertType = '';
+        let alertKey = '';
+
+        if (gasVolume >= 2400) {
+            alertType = '⚠️ Cảnh báo Mạnh';
+            alertKey = 'strong';
+        } else if (gasVolume >= 1200) {
+            alertType = '⚠️ Cảnh báo Nhẹ';
+            alertKey = 'mild';
+        }
+
+        // Nếu không có cảnh báo hoặc đã gửi cảnh báo này rồi thì không gửi lại
+        if (!alertType || this.lastAlertSent[alertKey]) {
+            return;
+        }
+
+        // Gửi cảnh báo qua email
+        await this.mailService.sendGasAlert(fieldId, gasVolume, alertType);
+
+        // Đánh dấu đã gửi cảnh báo này
+        this.lastAlertSent[alertKey] = true;
     }
 }

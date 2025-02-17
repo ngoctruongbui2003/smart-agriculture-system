@@ -17,6 +17,16 @@ export class SensorController {
     };
   }
 
+  @MessagePattern('ngoctruongbui/sensor-gas')
+  async handleGasData(fieldId: string, gasValue: string) {
+    const gasVolume = parseInt(gasValue, 10);
+
+    return {
+      message: 'Alert gas',
+      data: await this.sensorService.handleGasData(fieldId, gasVolume)
+    };
+  }
+
   @Post()
   async create(@Body() createSensorDto: CreateSensorDto) {
     return {

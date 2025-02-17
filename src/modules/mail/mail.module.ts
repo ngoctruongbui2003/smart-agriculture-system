@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MailerModule } from '@nestjs-modules/mailer';
@@ -38,7 +38,7 @@ import { SensorModule } from '../sensor/sensor.module';
     }),
     UsersModule,
     FieldModule,
-    SensorModule,
+    forwardRef(() => SensorModule),
   ],
   providers: [MailService],
   exports: [MailService],
