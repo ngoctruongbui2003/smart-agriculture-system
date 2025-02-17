@@ -86,7 +86,7 @@ export class MailService {
 
         await this.sendEmail(
             email,
-            `${alertType} - Mức gas: ${gasVolume} ppm`,
+            `${alertType} - Mức gas: ${gasPpm} ppm`,
             'gas-alert',
             {
                 alertType,
