@@ -50,7 +50,7 @@ export const formatDateToVietnamese = (date: Date): string => {
 }
 
 export const adcToPpm = (adcValue: number, maxPpm: number = 5000): number => {
-    return (adcValue / 4095) * maxPpm;
+    return Math.round((adcValue / 4095) * maxPpm);
 }
 
 export const convertSoilMoisture = (value: number) => Math.round(((4095 - value) / 4095) * 100 * 100) / 100;

@@ -247,27 +247,37 @@ export class SensorService {
         };
     }
 
-    async handleGasData(fieldId:string, gasVolume: number) {
+    async handleGasData(fieldId: string, gasVolume: number) {
         let alertType = '';
         let alertKey = '';
-
+    
         if (gasVolume >= 2400) {
             alertType = '⚠️ Cảnh báo Mạnh';
             alertKey = 'strong';
         } else if (gasVolume >= 1200) {
             alertType = '⚠️ Cảnh báo Nhẹ';
             alertKey = 'mild';
-        }
-
-        // Nếu không có cảnh báo hoặc đã gửi cảnh báo này rồi thì không gửi lại
-        if (!alertType || this.lastAlertSent[alertKey]) {
+        } else {
+            // 🚨 Gas dưới 1200 -> Reset trạng thái cảnh báo
+            this.lastAlertSent = {};
             return;
         }
-
-        // Gửi cảnh báo qua email
+    
+        // Nếu cảnh báo giảm từ Mạnh -> Nhẹ thì không gửi
+        if (this.lastAlertSent['strong'] && alertKey === 'mild') {
+            return;
+        }
+    
+        // Nếu đã gửi cảnh báo này rồi thì không gửi lại
+        if (this.lastAlertSent[alertKey]) {
+            return;
+        }
+    
+        // 🚀 Gửi email cảnh báo
         await this.mailService.sendGasAlert(fieldId, gasVolume, alertType);
-
-        // Đánh dấu đã gửi cảnh báo này
+    
+        // 🔄 Cập nhật trạng thái cảnh báo
+        this.lastAlertSent = {}; // Reset trạng thái cũ
         this.lastAlertSent[alertKey] = true;
     }
 }
