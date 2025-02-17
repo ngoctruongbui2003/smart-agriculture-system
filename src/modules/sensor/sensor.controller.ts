@@ -1,7 +1,7 @@
 import { CreateSensorDto, PaginationDto } from './dto';
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { SensorService } from './sensor.service';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('sensor')
 export class SensorController {
@@ -18,7 +18,8 @@ export class SensorController {
   }
 
   @MessagePattern('ngoctruongbui/sensor-gas')
-  async handleGasData(fieldId: string, gasValue: string) {
+  async handleGasData(@Payload() data: { fieldId: string, gasValue: string }) {
+    const { fieldId, gasValue } = data;
     const gasVolume = parseInt(gasValue, 10);
 
     return {
