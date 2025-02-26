@@ -1,4 +1,4 @@
-name: Deploy to AWS EC2
+name: Deploy to Server
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Install dependencies
+      - name: install package
         run: npm install
 
       - name: Set environment variables for Docker build
@@ -39,41 +39,27 @@ jobs:
       - name: Add tag docker image (optional)
         run: docker tag ${{ secrets.IMAGE_NAME }}-production:${{ secrets.TAG_NAME }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }}-production:${{ secrets.TAG_NAME }}_${{ github.sha }}
 
-      - name: Push Docker image to Docker Hub (optional)
+      - name: Push Docker image to docker hub (optional)
         run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }}-production:${{ secrets.TAG_NAME }}_${{ github.sha }}
 
-      - name: Deploy to AWS EC2
+      - name: Deploy to Server (using SSH and Docker)
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_PASS: ${{ secrets.SSH_PASS }}
           IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           TAG_NAME: ${{ secrets.TAG_NAME }}
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
-
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST << 'EOF'
-            # Tạo thư mục chứa container nếu chưa có
+          sshpass -p $SSH_PASS ssh -o StrictHostKeyChecking=no -p 24700 $SSH_USERNAME@$SSH_HOST << 'EOF'
             mkdir -p /container && cd /container
-
-            # Dừng và xóa container cũ nếu có
             if docker ps -aq --filter name=${{ secrets.IMAGE_NAME }}-production | grep -q .; then
                 docker stop ${{ secrets.IMAGE_NAME }}-production || true
                 docker rm -f ${{ secrets.IMAGE_NAME }}-production || true
             fi
-
-            # Xóa image cũ nếu có
             if docker images --filter=reference=${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }}-production --quiet | grep -q .; then
                 docker images --filter=reference=${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }}-production --quiet | xargs -r docker rmi -f
             fi
-
-            # Pull image mới từ Docker Hub
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }}-production:${{ secrets.TAG_NAME }}_${{ github.sha }}
-
-            # Chạy container mới
             docker run -d -p 3001:3000 --name ${{ secrets.IMAGE_NAME }}-production ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }}-production:${{ secrets.TAG_NAME }}_${{ github.sha }}
           EOF
-
-          # Xóa private key sau khi dùng xong
-          rm -f private_key.pem
