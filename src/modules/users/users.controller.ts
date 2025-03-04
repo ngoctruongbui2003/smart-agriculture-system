@@ -50,6 +50,14 @@ export class UsersController {
     };
   }
 
+  @Patch(':id/receive-weekly-email')
+  async updateEmailPreference(@Param('id') id: string, @Body('receiveWeeklyEmail') receiveWeeklyEmail: boolean) {
+    return {
+      message: UPDATE_SUCCESS,
+      data: await this.usersService.updateReceiveWeeklyEmail(id, receiveWeeklyEmail)
+    };
+  }
+
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return {

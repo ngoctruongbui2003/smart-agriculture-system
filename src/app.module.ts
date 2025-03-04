@@ -12,6 +12,8 @@ import { TransformInterceptor } from './core/transform.interceptor';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SensorModule } from './modules/sensor/sensor.module';
 import { FieldModule } from './modules/field/field.module';
+import { WateringHistoryModule } from './modules/watering-history/watering-history.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { FieldModule } from './modules/field/field.module';
     WeatherModule,
     SensorModule,
     FieldModule,
+    WateringHistoryModule,
+    MailModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -37,15 +41,16 @@ import { FieldModule } from './modules/field/field.module';
       }),
       inject: [ConfigService],
     }),
-    ClientsModule.register([
-      {
-        name: 'MQTT_SERVICE',
-        transport: Transport.MQTT,
-        options: {
-          url: 'mqtt://broker.hivemq.com',
-        },
-      },
-    ]),
+    WateringHistoryModule,
+    // ClientsModule.register([
+    //   {
+    //     name: 'MQTT_SERVICE',
+    //     transport: Transport.MQTT,
+    //     options: {
+    //       url: 'mqtt://broker.hivemq.com',
+    //     },
+    //   },
+    // ]),
   ],
   controllers: [AppController],
   providers: [

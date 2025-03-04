@@ -23,4 +23,12 @@ export class WeatherController {
       data: await this.weatherService.getWeatherByIP(ip),
     };
   }
+
+  @Get('city/:city')
+  async getWeatherByCityName(@Param('city') city: string) {
+    return {
+      message: 'This action returns weather by City Name',
+      data: await this.weatherService.getWeatherByCityName(city),
+    };
+  }
 }

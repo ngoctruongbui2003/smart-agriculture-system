@@ -18,8 +18,20 @@ export class Sensor {
     @Prop()
     soilMoisture: string;
 
+    @Prop()
+    rainVolume: string;
+
+    @Prop()
+    gasVolume: string;
+
     @Prop({ type: Types.ObjectId, ref: 'Field' })
     fieldId: Field;
+
+    @Prop({ type: Date, default: () => new Date(new Date().getTime() + 7 * 60 * 60 * 1000) }) 
+    addedAt: Date;
+
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export const SensorSchema = SchemaFactory.createForClass(Sensor);

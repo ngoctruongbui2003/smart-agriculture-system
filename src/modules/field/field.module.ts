@@ -8,5 +8,6 @@ import { Field, FieldSchema } from 'src/schemas/field.schema';
   imports: [MongooseModule.forFeature([{ name: Field.name, schema: FieldSchema }])],
   controllers: [FieldController],
   providers: [FieldService],
+  exports: [FieldService],
 })
 export class FieldModule {}

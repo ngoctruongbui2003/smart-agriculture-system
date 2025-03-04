@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{alertType}} - Cảnh báo mức khí gas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      border-left: 8px solid {{borderColor}};
+    }
+    h2 {
+      color: {{textColor}};
+      text-align: center;
+    }
+    p {
+      font-size: 16px;
+      color: #333;
+      line-height: 1.5;
+    }
+    .alert-box {
+      background: {{bgColor}};
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .button {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: {{btnColor}};
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      color: #777;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>{{alertType}}</h2>
+    <div class="alert-box">
+      📊 <strong>Mức gas hiện tại:</strong> {{gasPpm}} ppm
+    </div>
+    <p>⚠️ Hệ thống phát hiện nồng độ khí gas vượt ngưỡng an toàn. Vui lòng kiểm tra ngay để tránh nguy hiểm!</p>
+    <a href="" class="button">Mở ứng dụng để xem Chi Tiết</a>
+    <p class="footer">🚨 Email này được gửi tự động từ hệ thống GreenFairm. Vui lòng không trả lời.</p>
+  </div>
+</body>
+</html>

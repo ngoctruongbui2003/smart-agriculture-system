@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { User } from './user.schema';
 
 export type FieldDocument = HydratedDocument<Field>;
 
@@ -28,6 +29,15 @@ export class Field {
 
     @Prop()
     haverstTime: string;
+
+    @Prop()
+    isWeather: boolean;
+
+    @Prop()
+    isAutoWatering: boolean;
+
+    @Prop({ type: Types.ObjectId, ref: 'User' })
+    userId: User;
 }
 
 export const FieldSchema = SchemaFactory.createForClass(Field);

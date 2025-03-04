@@ -1,42 +1,79 @@
 // field.controller.ts
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Patch } from '@nestjs/common';
 import { FieldService } from './field.service';
-import { CreateFieldDto } from './dto';
+import { CreateFieldDto, PaginationDto, UpdateFieldDto } from './dto';
 
 @Controller('fields')
 export class FieldController {
     constructor(private readonly fieldService: FieldService) {}
 
-    // Endpoint to create a new field
+    @Post('create')
+    async create(@Body() createFieldDto: CreateFieldDto) {
+        return {
+            message: 'Field created successfully',
+            data: await this.fieldService.create(createFieldDto),
+        };
+    }
+
     @Post()
-    create(@Body() createFieldDto: CreateFieldDto) {
-        return this.fieldService.create(createFieldDto);
+    async findAll(@Body() paginationDto: PaginationDto,) {
+        return {
+            message: 'Fields fetched successfully',
+            data: await this.fieldService.findAll(paginationDto),
+        };
     }
 
-    // Endpoint to get all fields
-    @Get()
-    findAll() {
-        return this.fieldService.findAll();
-    }
-
-    // Endpoint to get a specific field by ID
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.fieldService.findOne(id);
+    async findOne(@Param('id') id: string) {
+        return {
+            message: 'Field fetched successfully',
+            data: await this.fieldService.findOne(id),
+        };
     }
 
-    // Endpoint to update a field by ID
-    @Put(':id')
-    update(
-        @Param('id') id: string,
-        @Body() updateFieldDto: CreateFieldDto,
+    @Post('user/:userId')
+    async findByUserId(
+        @Param('userId') userId: string,
+        @Body() paginationDto: PaginationDto,
     ) {
-        return this.fieldService.update(id, updateFieldDto);
+        return {
+            message: 'Field fetched successfully',
+            data: await this.fieldService.findByUserId(userId, paginationDto),
+        };
     }
 
-    // Endpoint to delete a field by ID
+    @Patch(':id')
+    async update(
+        @Param('id') id: string,
+        @Body() updateFieldDto: UpdateFieldDto,
+    ) {
+        return {
+            message: 'Field updated successfully',
+            data: await this.fieldService.update(id, updateFieldDto),
+        };
+    }
+
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.fieldService.remove(id);
+    async remove(@Param('id') id: string) {
+        return {
+            message: 'Field deleted successfully',
+            data: await this.fieldService.remove(id),
+        };
+    }
+
+    @Patch(':id/switch-weather')
+    async switchWeather(@Param('id') id: string) {
+        return {
+            message: 'Field weather status updated successfully',
+            data: await this.fieldService.switchWeather(id),
+        };
+    }
+
+    @Patch(':id/switch-auto-watering')
+    async switchAutoWatering(@Param('id') id: string) {
+        return {
+            message: 'Field auto watering status updated successfully',
+            data: await this.fieldService.switchAutoWatering(id),
+        };
     }
 }

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/schemas/user.schema';
 import { CreateUserDto, UpdateUserDto, UpdateUserPasswordDto } from './dto';
-import { comparePassword, hashPassword } from 'src/utils';
+import { comparePassword, convertObjectId, hashPassword } from 'src/utils';
 import { ACCOUNT_TYPE_NOT_LOCAL, INVALID_PASSWORD, SAME_OLD_PASSWORD, USER_NOT_FOUND } from 'src/constants/server';
 import { AccountType } from 'src/constants/enum';
 
@@ -33,6 +33,7 @@ export class UsersService {
 
   async findOne(id: string) {
     const user = await this.userModel.findById(id)
+    delete user.password;
     return user;
   }
 
@@ -42,8 +43,12 @@ export class UsersService {
   }
 
   async findByProps(props: Record<string, any>) {
-    const user = await this.userModel.findOne(props);
+    const user = await this.userModel.findOne(props).exec();
     return user;
+  }
+
+  async findUsersReceivingWeeklyEmail(): Promise<User[]> {
+    return await this.userModel.find({ receiveWeeklyEmail: true }).exec();
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -52,6 +57,7 @@ export class UsersService {
       updateUserDto,
       { new: true }
     )
+    delete user.password;
     if (!user) throw new BadRequestException(USER_NOT_FOUND);
 
     return user;
@@ -81,6 +87,19 @@ export class UsersService {
 
     delete foundUser.password;
     return foundUser;
+  }
+
+  async updateReceiveWeeklyEmail(id: string, receiveWeeklyEmail: boolean) {
+    const user = await this.userModel.findByIdAndUpdate(
+      id,
+      { receiveWeeklyEmail },
+      { new: true }
+    )
+    
+    delete user.password;
+    if (!user) throw new BadRequestException(USER_NOT_FOUND);
+
+    return user;
   }
 
   async remove(id: string) {
