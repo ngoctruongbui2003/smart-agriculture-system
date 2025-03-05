@@ -20,7 +20,7 @@ export class MailService {
         private readonly sensorService: SensorService,
     ) {}
 
-    @Cron('30 21 * * *', { timeZone: 'Asia/Ho_Chi_Minh' }) 
+    @Cron('30 21 * * 0', { timeZone: 'Asia/Ho_Chi_Minh' })
     // @Cron('* * * * *') // Every minute
     async sendWeeklyReport() {
         this.logger.log('🔄 Bắt đầu gửi email báo cáo hàng tuần...');
